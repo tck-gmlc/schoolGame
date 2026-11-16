@@ -20,6 +20,9 @@ class Player(pygame.sprite.Sprite):
         self.dirY = 0
         self.dx = 0
         self.dy = 0
+        self.speed = 5
+        self.speedDiag = self.speed / math.sqrt(2)
+        print(self.speedDiag)
 
     def movement(self):
         keys = pygame.key.get_pressed()
@@ -42,45 +45,47 @@ class Player(pygame.sprite.Sprite):
 
         match (self.dirX,self.dirY):
             case (-1,-1):
-                self.dx = -7
-                self.dy = -7
+                self.dx = -1 * self.speedDiag
+                self.dy = -1 * self.speedDiag
             case (-1,0):
-                self.dx = -10
+                self.dx = -1 * self.speed
                 self.dy = 0
             case (-1,1):
-                self.dx = -7
-                self.dy = 7
+                self.dx = -1 * self.speedDiag
+                self.dy = self.speedDiag
 
             case (0,-1):
                 self.dx = 0
-                self.dy = -10
+                self.dy = -1 * self.speed
             case (0,0):
                 self.dx = 0
                 self.dy = 0
             case (0,1):
                 self.dx = 0
-                self.dy = 10
+                self.dy = self.speed
             
             case (1,-1):
-                self.dx = 7
-                self.dy = -7
+                self.dx = self.speedDiag
+                self.dy = -1 * self.speedDiag
             case (1,0):
-                self.dx = 10
+                self.dx = self.speed
                 self.dy = 0
             case (1,1):
-                self.dx = 7
-                self.dy = 7
+                self.dx = self.speedDiag
+                self.dy = self.speedDiag
 
 
+    def collision(self):
         self.rect.x += self.dx
         self.rect.y += self.dy
 
     def update(self):
         screen.blit(self.surface, self.rect)
         player.movement()
+        player.collision()
 
 
-player = Player((200,200),(50,50),(255,0,0))
+player = Player((200,200),(25,25),(255,0,0))
 
 while run:
     screen.fill((145,142,133))
