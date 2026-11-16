@@ -1,0 +1,17 @@
+{
+    "id": "startin",
+    "type": "combat",
+    "bounds": {"width": 256, "height": 256},
+    "doors": {
+        "north": {},
+        "east": {},
+        "south": {"x": 128, "y": 256, "locked": true},
+        "west": {}
+    },
+    "colliders": [
+
+    ],
+    "spawns": [
+
+    ]
+}
