@@ -1,11 +1,11 @@
 {
-    "id": "startin",
+    "id": "starting",
     "type": "combat",
     "bounds": {"width": 256, "height": 256},
     "doors": {
         "north": {},
         "east": {},
-        "south": {"x": 128, "y": 256, "locked": true},
+        "south": {"x": 128, "y": 256, "locked": false},
         "west": {}
     },
     "colliders": [
