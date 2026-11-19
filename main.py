@@ -97,7 +97,7 @@ class Player():
 
 class World():
     def __init__(self,origin=(0,0)):
-        with open("data\\rooms\\starting.json", encoding="utf-8") as room:
+        with open("./data/rooms/starting.json", encoding="utf-8") as room:
             data = json.load(room)
 
         self.width = data["bounds"]["width"]
