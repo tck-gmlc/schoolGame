@@ -8,9 +8,34 @@ clock = pygame.time.Clock()
 FPS = 60
 run = True
 keybinds = {'up': pygame.K_w, 'left': pygame.K_a, 'down': pygame.K_s, 'right': pygame.K_d}
+rCount = 0
+
+
+class Room():
+    def __init__(self, pos, id, color=(145,142,133)):
+        global rCount
+
+        with open(f"./data/rooms/{id}.json", encoding="utf-8") as room:
+                    data = json.load(room)
+        self.data=  data
+        rCount += 1
+        self.rID = rCount
+        self.width = data["bounds"]["width"]
+        self.height = data["bounds"]["height"]
+        self.surface = pygame.Surface((self.width,self.height))
+        self.surface.fill(color)
+        self.rect = self.surface.get_rect()
+        self.pos = pos
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+
+    def update(self):
+        screen.blit(self.surface, self.rect)
+
+
 
 class Player():
-    def __init__(self,world,pos,size,color):
+    def __init__(self,pos,size,color):
         self.surface = pygame.Surface(size)
         self.surface.fill(color)
         self.rect = self.surface.get_rect()
@@ -74,61 +99,53 @@ class Player():
                 self.dy = self.speedDiag
 
 
-    def collision(self):
-        if self.rect.right + self.dx >= world.rect.right:
-            self.rect.right = world.rect.right
-        elif self.rect.left + self.dx <= world.rect.left:
-            self.rect.left = world.rect.left
-        else:
-            self.rect.x += self.dx
+    def collision(self, room):
 
-        if self.rect.bottom + self.dy >= world.rect.bottom:
-            self.rect.bottom = world.rect.bottom
-        elif self.rect.top + self.dy <= world.rect.top:
-            self.rect.top = world.rect.top
-        else:
-            self.rect.y += self.dy
+        self.rect.x += self.dx
+        self.rect.y += self.dy
 
-    def update(self):
+        for collider in room.data["colliders"]:
+            if room.data["colliders"][collider]["type"] == "xConst":
+                x = room.data["colliders"][collider]["x"] + room.pos[0]
+                start = room.data["colliders"][collider]["start"] + room.pos[1]
+                stop = room.data["colliders"][collider]["stop"] + room.pos[1]
+                
+                if self.rect.bottom > start and self.rect.top < stop:
+                    if self.dx > 0 and self.rect.right >= x and self.rect.left < x:
+                        self.rect.right = x
+                    elif self.dx < 0 and self.rect.left <= x and self.rect.right > x:
+                        self.rect.left = x
+
+            if room.data["colliders"][collider]["type"] == "yConst":
+                            y = room.data["colliders"][collider]["y"] + room.pos[1]
+                            start = room.data["colliders"][collider]["start"] + room.pos[0]
+                            stop = room.data["colliders"][collider]["stop"] + room.pos[0]
+                            
+                            if self.rect.right > start and self.rect.left < stop:
+                                if self.dy > 0 and self.rect.bottom >= y and self.rect.top < y:
+                                    self.rect.bottom = y
+                                elif self.dy < 0 and self.rect.top <= y and self.rect.bottom > y:
+                                    self.rect.top = y
+
+                        
+
+
+
+    def update(self,room):
         screen.blit(self.surface, self.rect)
         player.movement()
-        player.collision()
+        player.collision(room)
+        
 
+room1 = Room((128,128), "starting")
+player = Player((10,10),(25,25),(255,0,0))
 
-class World():
-    def __init__(self,origin=(0,0)):
-        with open("./data/rooms/starting.json", encoding="utf-8") as room:
-            data = json.load(room)
-
-        self.width = data["bounds"]["width"]
-        self.height = data["bounds"]["height"]
-        self.surface = pygame.Surface((self.width,self.height))
-        self.surface.fill((145,142,133))
-        self.rect = self.surface.get_rect()
-        self.rect.x = origin[0]
-        self.rect.y = origin[1]
-
-        if data["doors"]["south"]:
-            self.S_door = pygame.sprite.Sprite
-            self.S_door.surface = pygame.Surface((32,8))
-            self.S_door.surface.fill((0,255,0))
-            self.S_door.rect = self.S_door.surface.get_rect()
-            self.S_door.rect.x = origin[0] + data["doors"]["south"]["x"] - 16
-            self.S_door.rect.y = origin[1] + data["doors"]["south"]["y"] - 4
-
-    def update(self):
-        screen.blit(self.surface, self.rect)
-        screen.blit(self.S_door.surface, self.S_door.rect)
-
-
-world = World()
-player = Player(world,(200,200),(25,25),(255,0,0))
 
 while run:
     screen.fill((50,50,50))
 
-    world.update()
-    player.update()
+    room1.update()
+    player.update(room1)
 
 
     for event in pygame.event.get():

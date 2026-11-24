@@ -1,16 +1,20 @@
 {
     "id": "starting",
-    "type": "combat",
+    "type": "spawn",
     "bounds": {"width": 256, "height": 256},
     "doors": {
         "north": {},
         "east": {},
-        "south": {"x": 128, "y": 256, "locked": false},
+        "south": {"off": 128},
         "west": {}
     },
-    "colliders": [
-
-    ],
+    "colliders": {
+        "north_wall": {"type": "yConst", "y": 0, "start": 0, "stop": 256},
+        "east_wall": {"type": "xConst", "x": 256, "start": 0, "stop": 256},
+        "south_wall": {"type": "yConst", "y": 256, "start": 0, "stop": 256},
+        "west_wall": {"type": "xConst", "x": 0, "start": 0, "stop": 256}
+        
+    },
     "spawns": [
 
     ]
